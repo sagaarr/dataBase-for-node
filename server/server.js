@@ -1,67 +1,29 @@
-const mongoose = require('mongoose');
+const express = require("express");
+const bodyParser = require("body-parser");
 
-mongoose.Promise = global.Promise;
+let {mongoose} = require("./db/mongoose");
+let {Todo} = require("./models/todo");
+let {User} = require("./models/user");
 
-mongoose.connect('mongodb://localhost:27017/User');
+let app = express();
+app.use(bodyParser.json());
 
-let User = mongoose.model('User', {
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    minlength:1,
-    trim: true
-  }
+app.post("/todo" , (req,res)=> {
+  let todo = new Todo({
+    text : req.body.text
+  });
 
-});
+  todo.save().then((doc) => {
+    res.send(doc)
+  }, (e) => {
+    console.log(e);
+  });
 
-const abc = new User({
-  name:"xyz",
-  email:"asssdgfg.com"
+  
 })
 
-abc.save().then((result) => console.log(result)).catch((err) => console.log(err));
 
 
-// let Todo = mongoose.model('Todo', {
-//   text: {
-//     type: String,
-//     required: true,
-//     minlength: 1,
-//     trim: true
-//   },
-//   completed: {
-//     type: Boolean,
-//     default: false
-//   },
-//   completedAt: {
-//     type: Number,
-//     default: null
-//   }
-// });
-
-// let ExmpTodo = new Todo({
-//   text: "S",
-//   completed: true,
-//   completedAt: 1995
-// });
-
-// let abc = new Todo({
-//   text:"                                       abc",
-// })
-
-// abc.save().then((doc) => {
-//   console.log(doc)
-// }, (e) => {
-//   console.log(`ERROR: ERROR: ERROR: ${e}`);
-// })
-
-
-// ExmpTodo.save().then((doc) => {
-//   console.log(doc)
-// }, (e) => {
-//   console.log(e)
-// });
+app.listen(3000, ()=> {
+  console.log("Server Started");
+})
